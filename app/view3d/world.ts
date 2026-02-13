@@ -41,9 +41,6 @@ class World {
 
     const element = this.renderer.domElement;
 
-    document.onkeydown = (e) => this.onKeyInput("DOWN", e);
-    document.onkeyup = (e) => this.onKeyInput("UP", e);
-
     element.onclick = (e) => {
       for (let handler of this._clickHandlers) handler(e);
     };
