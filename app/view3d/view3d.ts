@@ -1,12 +1,17 @@
 import * as THREE from "three";
 import type { System, World } from "./world";
-import { OrbitControls, Sky } from "three/examples/jsm/Addons.js";
+import { GLTFLoader, OrbitControls, Sky } from "three/examples/jsm/Addons.js";
 
 export class View3D implements System {
     private currentQuaternion: THREE.Quaternion;
-    private object: THREE.Mesh;
+    private object: THREE.Object3D;
     private controls: OrbitControls;
     public _killSystem: boolean = false;
+    private rawQuaternion = new THREE.Quaternion();
+    private zeroQuaternion = new THREE.Quaternion();
+    private currentPosition = new THREE.Vector3();
+    private lastPosition!: THREE.Vector3;
+    private movementEnabled: boolean = false;
 
     constructor(private world: World) {
         this.currentQuaternion = new THREE.Quaternion();
@@ -27,30 +32,49 @@ export class View3D implements System {
         this.world.scene.add(referencePlane);
 
         this.initSky();
+
+        const light = this.getLight();
+        this.world.add(light);
+
+        const mainAxes = this.getAxesHelper();
+        mainAxes.position.set(0, 0, -5);
+        this.world.scene.add(mainAxes);
     }
 
     step(delta: number): void {
         this.controls.update();
     }
 
-    private getObject(): THREE.Mesh {
-        const geom = new THREE.BoxGeometry(1, 0.1, 1);
-        const mat = new THREE.MeshBasicMaterial({ color: '#5ab862' });
-        const mesh = new THREE.Mesh(geom, mat);
-        return mesh;
+    private getObject(): THREE.Object3D {
+        
+        const base = new THREE.Object3D();
+
+        const loader = new GLTFLoader();
+        loader.load('app/view3d/firm_model.glb', (gltf) => {
+            const model = gltf.scene.children[0];
+            model.scale.set(0.1, 0.1, 0.1);
+            base.add(model);
+        });
+
+        return base;
     }
 
-    private getAxesHelper(): THREE.AxesHelper {
-        const axesHelper = new THREE.AxesHelper(2);
+    private getAxesHelper(scale: number = 2): THREE.AxesHelper {
+        const axesHelper = new THREE.AxesHelper(scale);
         return axesHelper;
     }
 
     private getReferencePlane(): THREE.Mesh {
-        const planeImage = new THREE.TextureLoader().load('app/three-utils/referencePlane.png');
+        const planeImage = new THREE.TextureLoader().load('app/view3d/Protractor.png');
         const geom = new THREE.PlaneGeometry(10, 10);
         const mat = new THREE.MeshBasicMaterial({ map: planeImage });
         const plane = new THREE.Mesh(geom, mat);
         return plane;
+    }
+
+    private getLight(): THREE.AmbientLight {
+        const light = new THREE.AmbientLight('#ffffff', 1);
+        return light;
     }
 
     private initSky() {
@@ -87,8 +111,35 @@ export class View3D implements System {
     }
 
     public setQuaternion(x: number, y: number, z: number, w: number): void {
-        this.currentQuaternion.set(x, y, z, w);
-        this.object.setRotationFromQuaternion(this.currentQuaternion);
-        this.object.matrixWorldNeedsUpdate = true;
+        this.rawQuaternion.set(x,y,z,w);
+        this.currentQuaternion.copy(this.zeroQuaternion).multiply(this.rawQuaternion);
+        this.object.quaternion.copy(this.currentQuaternion);
+    }
+
+    public setPosition(x: number, y: number, z: number): void {
+
+        if (!this.movementEnabled) { return; }
+
+        if (this.lastPosition == null) {
+            this.lastPosition = new THREE.Vector3(x, y, z);
+        }
+
+        this.currentPosition = new THREE.Vector3(x, y, z).sub(this.lastPosition);
+
+        this.object.position.copy(this.currentPosition);
+    }
+
+    public setMovementEnabled(enabled: boolean): void {
+
+        console.log(enabled);
+        if (!enabled) {
+            this.object.position.set(0, 0, 0);
+        }
+
+        this.movementEnabled = enabled;
+    }
+
+    public zero(): void {
+        this.zeroQuaternion.copy(this.rawQuaternion).invert();
     }
 }
