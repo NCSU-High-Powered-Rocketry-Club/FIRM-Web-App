@@ -41,7 +41,7 @@ export class View3D implements System {
         this.world.scene.add(mainAxes);
     }
 
-    step(delta: number): void {
+    step(): void {
         this.controls.update();
     }
 

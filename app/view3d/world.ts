@@ -49,13 +49,6 @@ class World {
     };
   }
 
-  onKeyInput(type: string, e: KeyboardEvent): void {
-    const key = e.key.toLowerCase();
-    if (type == "DOWN") {
-    } else if (type == "UP") {
-    }
-  }
-
   requestPointerLock(element: HTMLElement): void {
     if (element.requestPointerLock) element.requestPointerLock().catch(() => { });
   }
@@ -70,7 +63,7 @@ class World {
     }
   }
 
-  _animate(t?: number): void {
+  _animate(): void {
     requestAnimationFrame((t) => {
       if (this._previousRAF == null) {
         this._previousRAF = t;
