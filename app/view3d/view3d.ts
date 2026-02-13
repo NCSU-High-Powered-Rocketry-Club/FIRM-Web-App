@@ -131,7 +131,6 @@ export class View3D implements System {
 
     public setMovementEnabled(enabled: boolean): void {
 
-        console.log(enabled);
         if (!enabled) {
             this.object.position.set(0, 0, 0);
         }

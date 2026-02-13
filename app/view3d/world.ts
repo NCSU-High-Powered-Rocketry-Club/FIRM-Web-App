@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-// import STATS from 'three/examples/jsm/libs/stats.module'
 
 class World {
   universalClock: THREE.Clock;
@@ -13,7 +12,6 @@ class World {
   _callOnRender: Array<(delta: number) => void>;
   _clickHandlers: Array<(e: MouseEvent) => void>;
   _previousRAF: number | null = null;
-  // _stats: STATS;
 
   constructor(parentElement?: HTMLElement, width: number = window.innerWidth, height: number = window.innerHeight) {
     THREE.Object3D.DEFAULT_UP.set(0, 0, 1);
@@ -40,9 +38,6 @@ class World {
     this._clickHandlers = [];
 
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-
-    // this._stats = new STATS();
-    // document.body.appendChild(this._stats.dom);
 
     const element = this.renderer.domElement;
 
@@ -100,7 +95,6 @@ class World {
       this._callOnRender[i](secs);
     }
     this.controls.update();
-    // this._stats.update();
     this._animate();
   }
 

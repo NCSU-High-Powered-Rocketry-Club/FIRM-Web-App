@@ -4,8 +4,6 @@ import type { FIRMPacket } from "firm-client";
 import { World } from "~/view3d/world";
 import { View3D } from "~/view3d/view3d";
 
-// const REFRESH_RATE_MS: number = 60;
-
 export function View3DPanel() {
   const { latestPacket, isConnected } = useFIRM();
 
@@ -32,6 +30,7 @@ export function View3DPanel() {
     view3DRef.current.zero();
   }
 
+  // Set View3D orientation and location from packet
   const processPacket = (pkt: FIRMPacket) => {
     if (view3DRef?.current == null) { return };
 
@@ -55,7 +54,7 @@ export function View3DPanel() {
   };
 
 
-  // Append a point whenever the latest packet changes
+  // Process new packet
   useEffect(() => {
     if (!latestPacket) return;
 
@@ -66,7 +65,7 @@ export function View3DPanel() {
     processPacket(latestPacket);
   }, [latestPacket]);
 
-  // Render throttle independent of packet arrival rate
+  // Create world and view3D on initialization
   useEffect(() => {
     const appElem = appRef.current;
     if (appElem != null && worldRef.current == null) {
