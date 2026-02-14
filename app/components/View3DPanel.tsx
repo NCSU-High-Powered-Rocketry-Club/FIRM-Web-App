@@ -76,6 +76,16 @@ export function View3DPanel() {
       worldRef.current = world;
       view3DRef.current = view3D;
     }
+
+    return () => {
+      // cleanup view3D
+      if (worldRef?.current != null) {
+        worldRef.current.destroy();
+
+        worldRef.current = null;
+        view3DRef.current = null;
+      }
+    }
   }, []);
 
   return (
@@ -102,8 +112,7 @@ export function View3DPanel() {
         </div>
       </h2>
 
-
-      <div ref={appRef} style={{ display: 'flex', justifyContent: 'center', zIndex: 100 }}>
+      <div ref={appRef} style={{ display: 'flex', justifyContent: 'center' }}>
       </div>
     </section>
   );

@@ -99,6 +99,42 @@ class World {
   remove(object: THREE.Object3D): void {
     this.scene.remove(object);
   }
+
+  public destroy(): void {
+    // partial source: https://discourse.threejs.org/t/when-to-dispose-how-to-completely-clean-up-a-three-js-scene/1549/21
+
+    // dispose off all the 3D scene elements
+    const cleanMaterial = (material: THREE.Material) => {
+      material.dispose()
+      // dispose textures
+      for (const key of Object.keys(material)) {
+        const value = (material as any)[key];
+        if (value && typeof value === 'object' && 'minFilter' in value) {
+          value.dispose();
+        }
+      }
+    }
+
+    this.scene.traverseAncestors((object) => {
+      const mesh = object as THREE.Mesh;
+      if (!mesh.isMesh) { return; }
+      mesh.geometry.dispose();
+
+      if ((mesh.material as THREE.Material).isMaterial) {
+        cleanMaterial(mesh.material as THREE.Material);
+      } else if ((mesh.material as THREE.Material[]) instanceof Array) {
+        for (const mat of (mesh.material as THREE.Material[])) {
+          cleanMaterial(mat);
+        }
+      }
+    });
+
+    this.renderer.dispose();
+    this.scene.clear();
+    this.renderer.forceContextLoss();
+    const domElement = this.renderer.domElement;
+    domElement?.parentElement?.removeChild(domElement);
+  }
 }
 
 export abstract class System {

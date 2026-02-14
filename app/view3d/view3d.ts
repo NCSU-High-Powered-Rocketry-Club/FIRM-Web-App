@@ -33,12 +33,14 @@ export class View3D implements System {
 
         this.initSky();
 
-        const light = this.getLight();
+        const light = this.getAmbientLight();
         this.world.add(light);
 
         const mainAxes = this.getAxesHelper();
         mainAxes.position.set(0, 0, -5);
         this.world.scene.add(mainAxes);
+
+        this.world.renderer.domElement.style.borderRadius = '5px';
     }
 
     step(): void {
@@ -46,7 +48,6 @@ export class View3D implements System {
     }
 
     private getObject(): THREE.Object3D {
-        
         const base = new THREE.Object3D();
 
         const loader = new GLTFLoader();
@@ -72,8 +73,8 @@ export class View3D implements System {
         return plane;
     }
 
-    private getLight(): THREE.AmbientLight {
-        const light = new THREE.AmbientLight('#ffffff', 1);
+    private getAmbientLight(): THREE.AmbientLight {
+        const light = new THREE.AmbientLight('#ffffff', 20);
         return light;
     }
 
@@ -84,13 +85,13 @@ export class View3D implements System {
         this.world.scene.add(sky);
 
         const effectController = {
-            turbidity: 10,
-            rayleigh: 3,
-            mieCoefficient: 0.005,
+            turbidity: 0.5,
+            rayleigh: 3.508,
+            mieCoefficient: 0.016,
             mieDirectionalG: 0.7,
-            elevation: 2,
-            azimuth: 180,
-            exposure: this.world.renderer.toneMappingExposure
+            elevation: 63.5,
+            azimuth: 7.4,
+            exposure: 0.14
         };
 
         const uniforms = sky.material.uniforms;
@@ -107,11 +108,12 @@ export class View3D implements System {
 
         uniforms['sunPosition'].value.copy(sun);
 
+        this.world.renderer.toneMapping = THREE.ReinhardToneMapping;
         this.world.renderer.toneMappingExposure = effectController.exposure;
     }
 
     public setQuaternion(x: number, y: number, z: number, w: number): void {
-        this.rawQuaternion.set(x,y,z,w);
+        this.rawQuaternion.set(x, y, z, w);
         this.currentQuaternion.copy(this.zeroQuaternion).multiply(this.rawQuaternion);
         this.object.quaternion.copy(this.currentQuaternion);
     }
