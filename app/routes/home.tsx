@@ -9,6 +9,7 @@ import { Footer } from "~/components/Footer";
 import { ConnectionBar } from "~/components/ConnectionBar";
 import { FIRMProvider, useFIRM, isEditableTarget } from "~/contexts/FIRMContext";
 import { CalibrationPanel } from "~/components/CalibrationPanel";
+import { View3DPanel } from "~/components/View3DPanel";
 
 function getBodyContainerClasses(isConnected: boolean): string {
   let classes = "mx-auto flex max-w-5xl flex-col gap-4 px-6 py-6 transition-opacity";
@@ -59,6 +60,7 @@ function HomeContent() {
       <main className={bodyClasses}>
         <DeviceInfoPanel />
         <GraphsPanel />
+        <View3DPanel />
         <DeveloperPanel visible={showDev} />
         <CalibrationPanel visible={showCal} />
         <SettingsPanel />
