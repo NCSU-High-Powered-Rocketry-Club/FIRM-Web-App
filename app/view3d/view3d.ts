@@ -53,7 +53,7 @@ export class View3D implements System {
         const base = new THREE.Object3D();
 
         const loader = new GLTFLoader();
-        loader.load('app/view3d/firm_model.glb', (gltf) => {
+        loader.load('/firm_model.glb', (gltf) => {
             const model = gltf.scene.children[0];
             model.scale.set(0.1, 0.1, 0.1);
             base.add(model);
@@ -68,7 +68,7 @@ export class View3D implements System {
     }
 
     private getReferencePlane(): THREE.Mesh {
-        const planeImage = new THREE.TextureLoader().load('app/view3d/Protractor.png');
+        const planeImage = new THREE.TextureLoader().load('/Protractor.png');
         const geom = new THREE.PlaneGeometry(10, 10);
         const mat = new THREE.MeshBasicMaterial({ map: planeImage });
         const plane = new THREE.Mesh(geom, mat);
