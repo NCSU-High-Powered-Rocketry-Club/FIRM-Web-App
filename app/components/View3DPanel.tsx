@@ -51,6 +51,12 @@ export function View3DPanel() {
     const scale = 1;
 
     view3D.setPosition(px / scale, py / scale, pz / scale);
+
+    const mx = pkt.magnetic_field_x_microteslas;
+    const my = pkt.magnetic_field_y_microteslas;
+    const mz = pkt.magnetic_field_z_microteslas;
+
+    view3D.setNorth(mx, my, mz);
   };
 
 

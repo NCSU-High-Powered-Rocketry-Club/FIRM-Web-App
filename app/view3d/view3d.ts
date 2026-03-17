@@ -1,11 +1,12 @@
 import * as THREE from "three";
 import type { System, World } from "./world";
-import { GLTFLoader, OrbitControls, Sky } from "three/examples/jsm/Addons.js";
+import { GLTFLoader, Sky } from "three/examples/jsm/Addons.js";
 
 export class View3D implements System {
     private currentQuaternion: THREE.Quaternion;
+    private currentNorthVector: THREE.Vector3;
     private object: THREE.Object3D;
-    private controls: OrbitControls;
+    private northPointer: THREE.Line;
     public _killSystem: boolean = false;
     private rawQuaternion = new THREE.Quaternion();
     private zeroQuaternion = new THREE.Quaternion();
@@ -15,6 +16,7 @@ export class View3D implements System {
 
     constructor(private world: World) {
         this.currentQuaternion = new THREE.Quaternion();
+        this.currentNorthVector = new THREE.Vector3();
 
         const object = this.getObject();
         object.position.set(0, 0, 0);
@@ -24,7 +26,6 @@ export class View3D implements System {
         const axes = this.getAxesHelper();
         object.add(axes);
 
-        this.controls = new OrbitControls(this.world.camera, this.world.renderer.domElement);
         this.world.camera.position.set(0, 5, 5);
 
         const referencePlane = this.getReferencePlane();
@@ -41,11 +42,12 @@ export class View3D implements System {
         this.world.scene.add(mainAxes);
 
         this.world.renderer.domElement.style.borderRadius = '5px';
+
+        this.northPointer = this.getPointer();
+        this.world.scene.add(this.northPointer);
     }
 
-    step(): void {
-        this.controls.update();
-    }
+    step(): void { }
 
     private getObject(): THREE.Object3D {
         const base = new THREE.Object3D();
@@ -76,6 +78,16 @@ export class View3D implements System {
     private getAmbientLight(): THREE.AmbientLight {
         const light = new THREE.AmbientLight('#ffffff', 20);
         return light;
+    }
+
+    private getPointer(): THREE.Line {
+        const material = new THREE.LineBasicMaterial({ color: 0x0000ff });
+        const points = [];
+        points.push(this.object.position);
+        points.push(new THREE.Vector3(0, 1, 0).multiplyScalar(5));
+        const geometry = new THREE.BufferGeometry().setFromPoints(points);
+        const line = new THREE.Line(geometry, material);
+        return line;
     }
 
     private initSky() {
@@ -116,6 +128,18 @@ export class View3D implements System {
         this.rawQuaternion.set(x, y, z, w);
         this.currentQuaternion.copy(this.zeroQuaternion).multiply(this.rawQuaternion);
         this.object.quaternion.copy(this.currentQuaternion);
+    }
+
+    public setNorth(x: number, y: number, z: number): void {
+        this.currentNorthVector.set(x, y, z).normalize();
+        const positions = this.northPointer.geometry.attributes.position;
+        const origin = this.object.position;
+        const target = this.currentNorthVector.clone().multiplyScalar(5).applyQuaternion(this.rawQuaternion).add(origin);
+
+        positions.setXYZ(0, origin.x, origin.y, origin.z);
+        positions.setXYZ(1, target.x, target.y, target.z);
+
+        positions.needsUpdate = true;
     }
 
     public setPosition(x: number, y: number, z: number): void {

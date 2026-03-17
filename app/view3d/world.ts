@@ -129,6 +129,8 @@ class World {
       }
     });
 
+    this.controls.dispose();
+
     this.renderer.dispose();
     this.scene.clear();
     this.renderer.forceContextLoss();
