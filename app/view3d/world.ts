@@ -19,9 +19,7 @@ class World {
 
     this.renderer = new THREE.WebGLRenderer();
     this.renderer.setSize(width, height);
-    (parentElement ?? document.getElementById("app") ?? document.body).appendChild(
-      this.renderer.domElement
-    );
+    this.setParentElement((parentElement ?? document.getElementById("app") ?? document.body));
     this.universalClock = new THREE.Clock();
 
     this.camera = new THREE.PerspectiveCamera(
@@ -44,6 +42,10 @@ class World {
     element.onclick = (e) => {
       for (let handler of this._clickHandlers) handler(e);
     };
+  }
+
+  public setParentElement(element: HTMLElement): void {
+    element.appendChild(this.renderer.domElement);
   }
 
   requestPointerLock(element: HTMLElement): void {

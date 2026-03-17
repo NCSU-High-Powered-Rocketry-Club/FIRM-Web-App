@@ -32,6 +32,7 @@ function HomeContent() {
   const bodyClasses = getBodyContainerClasses(isConnected);
   const [showDev, setShowDev] = useState(false);
   const [showCal, setShowCal] = useState(false);
+  const [showView, setShowView] = useState(false);
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -47,6 +48,11 @@ function HomeContent() {
         e.preventDefault();
         setShowCal((v) => !v);
       }
+
+      if (e.key === "v" || e.key === "V") {
+        e.preventDefault();
+        setShowView((v) => !v);
+      }
     };
 
     window.addEventListener("keydown", onKeyDown);
@@ -60,7 +66,7 @@ function HomeContent() {
       <main className={bodyClasses}>
         <DeviceInfoPanel />
         <GraphsPanel />
-        <View3DPanel />
+        <View3DPanel visible = {showView}/>
         <DeveloperPanel visible={showDev} />
         <CalibrationPanel visible={showCal} />
         <SettingsPanel />

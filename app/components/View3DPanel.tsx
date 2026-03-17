@@ -4,7 +4,7 @@ import type { FIRMPacket } from "firm-client";
 import { World } from "~/view3d/world";
 import { View3D } from "~/view3d/view3d";
 
-export function View3DPanel() {
+export function View3DPanel({ visible }: { visible: boolean }) {
   const { latestPacket, isConnected } = useFIRM();
 
   const [isMovementEnabled, setMovementEnabled] = useState(false);
@@ -73,8 +73,14 @@ export function View3DPanel() {
 
   // Create world and view3D on initialization
   useEffect(() => {
+    if (!visible) { return };
     const appElem = appRef.current;
-    if (appElem != null && worldRef.current == null) {
+    if (!appElem) { return };
+    if (worldRef?.current != null) {
+      // already have the world and view setup, just need to re append them
+      worldRef.current.setParentElement(appElem);
+    } else {
+      // need to create new world and view, likely the first time initialized
       const world = new World(appElem, window.innerWidth / 2, window.innerWidth / 3);
       const view3D = new View3D(world);
       world.addSystem(view3D);
@@ -85,14 +91,17 @@ export function View3DPanel() {
 
     return () => {
       // cleanup view3D
-      if (worldRef?.current != null) {
+      const destroyOnHide = false;
+      if (worldRef?.current != null && destroyOnHide) {
         worldRef.current.destroy();
 
         worldRef.current = null;
         view3DRef.current = null;
       }
     }
-  }, []);
+  }, [visible]);
+
+  if (!visible) return null;
 
   return (
     <section className="mt-4 rounded-xl border border-slate-300 bg-white px-6 pt-3.5 pb-4 shadow-sm text-slate-900">
