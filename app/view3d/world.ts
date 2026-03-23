@@ -105,14 +105,17 @@ class World {
   public destroy(): void {
     // partial source: https://discourse.threejs.org/t/when-to-dispose-how-to-completely-clean-up-a-three-js-scene/1549/21
 
+    interface Disposable {
+      dispose(): void;
+    }
     // dispose off all the 3D scene elements
     const cleanMaterial = (material: THREE.Material) => {
       material.dispose()
       // dispose textures
       for (const key of Object.keys(material)) {
-        const value = (material as any)[key];
+        const value = (material as unknown as Record<string, object>)[key];
         if (value && typeof value === 'object' && 'minFilter' in value) {
-          value.dispose();
+          (value as unknown as Disposable).dispose();
         }
       }
     }

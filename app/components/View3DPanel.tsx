@@ -4,6 +4,8 @@ import type { FIRMPacket } from "firm-client";
 import { World } from "~/view3d/world";
 import { View3D } from "~/view3d/view3d";
 
+const DESTROY_ON_HIDE = false;
+
 export function View3DPanel({ visible }: { visible: boolean }) {
   const { latestPacket, isConnected } = useFIRM();
 
@@ -91,8 +93,7 @@ export function View3DPanel({ visible }: { visible: boolean }) {
 
     return () => {
       // cleanup view3D
-      const destroyOnHide = false;
-      if (worldRef?.current != null && destroyOnHide) {
+      if (worldRef?.current != null && DESTROY_ON_HIDE) {
         worldRef.current.destroy();
 
         worldRef.current = null;
