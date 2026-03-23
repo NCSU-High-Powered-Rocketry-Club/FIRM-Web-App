@@ -23,7 +23,8 @@
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-router": "^7.9.2",
-    "recharts": "^3.3.0"
+    "recharts": "^3.3.0",
+    "three": "^0.182.0"
   },
   "devDependencies": {
     "@react-router/dev": "^7.9.2",
@@ -31,6 +32,7 @@
     "@types/node": "^22",
     "@types/react": "^19.1.13",
     "@types/react-dom": "^19.1.9",
+    "@types/three": "^0.182.0",
     "@types/w3c-web-serial": "^1.0.8",
     "@typescript-eslint/eslint-plugin": "^8.46.3",
     "@typescript-eslint/parser": "^8.46.3",

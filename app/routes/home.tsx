@@ -9,6 +9,7 @@ import { Footer } from "~/components/Footer";
 import { ConnectionBar } from "~/components/ConnectionBar";
 import { FIRMProvider, useFIRM, isEditableTarget } from "~/contexts/FIRMContext";
 import { CalibrationPanel } from "~/components/CalibrationPanel";
+import { View3DPanel } from "~/components/View3DPanel";
 
 function getBodyContainerClasses(isConnected: boolean): string {
   let classes = "mx-auto flex max-w-5xl flex-col gap-4 px-6 py-6 transition-opacity";
@@ -31,6 +32,7 @@ function HomeContent() {
   const bodyClasses = getBodyContainerClasses(isConnected);
   const [showDev, setShowDev] = useState(false);
   const [showCal, setShowCal] = useState(false);
+  const [showView, setShowView] = useState(false);
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -46,6 +48,11 @@ function HomeContent() {
         e.preventDefault();
         setShowCal((v) => !v);
       }
+
+      if (e.key === "v" || e.key === "V") {
+        e.preventDefault();
+        setShowView((v) => !v);
+      }
     };
 
     window.addEventListener("keydown", onKeyDown);
@@ -59,6 +66,7 @@ function HomeContent() {
       <main className={bodyClasses}>
         <DeviceInfoPanel />
         <GraphsPanel />
+        <View3DPanel visible = {showView}/>
         <DeveloperPanel visible={showDev} />
         <CalibrationPanel visible={showCal} />
         <SettingsPanel />
