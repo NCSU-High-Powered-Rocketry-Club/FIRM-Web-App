@@ -125,7 +125,7 @@ export function GraphsPanel() {
             <LegendHeader />
           </div>
           <div className="h-48" style={{ color: themeColor }}>
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" initialDimension={ { width: 1, height: 1 } }>
               <LineChart data={graphData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                 <XAxis dataKey="t" tick={false} />
@@ -174,7 +174,7 @@ export function GraphsPanel() {
           </div>
 
           <div className="h-48" style={{ color: themeColor }}>
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" initialDimension={ { width: 1, height: 1 } }>
               <LineChart data={graphData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                 <XAxis dataKey="t" tick={false} />
@@ -219,7 +219,7 @@ export function GraphsPanel() {
         <div className="flex flex-col rounded-lg border border-slate-300 bg-slate-50/80 p-4">
           <h3 className="mb-2 text-sm font-semibold text-slate-800">Pressure (Pa)</h3>
           <div className="h-48">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" initialDimension={ { width: 1, height: 1 } }>
               <AreaChart data={graphData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                 <XAxis dataKey="t" tick={false} />
